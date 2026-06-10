@@ -1,0 +1,142 @@
+{
+  "app": { "name": "Coach Online", "tagline": "Run your coaching practice in one place" },
+  "nav": {
+    "dashboard": "Dashboard",
+    "clients": "Clients",
+    "sessions": "Sessions",
+    "tasks": "Tasks",
+    "chat": "Chat",
+    "progress": "Progress",
+    "users": "Users",
+    "analytics": "Analytics",
+    "billing": "Billing",
+    "logout": "Log out"
+  },
+  "auth": {
+    "login": "Log in",
+    "signup": "Sign up",
+    "email": "Email",
+    "password": "Password",
+    "fullName": "Full name",
+    "iAmCoach": "I am a coach",
+    "iAmClient": "I am a client",
+    "noAccount": "No account yet?",
+    "haveAccount": "Already have an account?",
+    "checkEmail": "Check your email to confirm your account."
+  },
+  "coach": {
+    "welcome": "Welcome back",
+    "activeClients": "Active clients",
+    "upcomingSessions": "Upcoming sessions",
+    "pendingReviews": "Pending reviews",
+    "addClient": "Add client",
+    "newSession": "New session",
+    "assignTask": "Assign task",
+    "clientEmail": "Client email",
+    "noClients": "No clients yet. Add your first client by email.",
+    "noSessions": "No sessions scheduled.",
+    "review": "Review",
+    "approve": "Approve",
+    "return": "Return",
+    "feedback": "Feedback"
+  },
+  "client": {
+    "welcome": "Welcome",
+    "openTasks": "Open tasks",
+    "nextSession": "Next session",
+    "completedTasks": "Completed",
+    "submit": "Submit",
+    "yourAnswer": "Your answer",
+    "noTasks": "No tasks assigned yet.",
+    "noSessions": "No upcoming sessions."
+  },
+  "admin": {
+    "title": "Admin panel",
+    "totalUsers": "Total users",
+    "coaches": "Coaches",
+    "clients": "Clients",
+    "revenue": "Revenue",
+    "recentUsers": "Recent users"
+  },
+  "common": {
+    "title": "Title",
+    "description": "Description",
+    "dueDate": "Due date",
+    "date": "Date",
+    "duration": "Duration (min)",
+    "status": "Status",
+    "save": "Save",
+    "cancel": "Cancel",
+    "send": "Send",
+    "typeMessage": "Type a message…",
+    "loading": "Loading…",
+    "language": "Language",
+    "minutes": "min",
+    "statuses": {
+      "scheduled": "Scheduled",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "no_show": "No-show",
+      "assigned": "Assigned",
+      "in_progress": "In progress",
+      "submitted": "Submitted",
+      "approved": "Approved",
+      "returned": "Returned"
+    }
+  },
+  "landing": {
+    "hero": "Become who you are meant to be.",
+    "sub": "A premium space where coaches and clients grow together — sessions, practice, dialogue and visible progress, in one calm place.",
+    "cta": "Start your journey",
+    "ctaSecondary": "Log in",
+    "heroEyebrow": "Personal transformation platform",
+    "heroNote": "Free for your first 3 clients · no card required",
+    "stats": { "coaches": "Coaches", "clients": "Clients growing", "sessions": "Sessions held" },
+    "journeyTitle": "The transformation journey",
+    "journeySub": "Every meaningful change follows a path. We built the platform around it.",
+    "journey": [
+      { "t": "Clarity", "d": "Define goals together in your first session. Everything starts from an honest picture of where you are." },
+      { "t": "Practice", "d": "Weekly growth tasks turn insight into habit. Submit, reflect, get feedback that lands." },
+      { "t": "Evolution", "d": "Progress you can see — milestones, metrics and momentum that compound session after session." }
+    ],
+    "benefitsTitle": "Why coaches choose us",
+    "benefits": [
+      { "t": "One calm workspace", "d": "Replace five scattered tools with a single, quiet place for your whole practice." },
+      { "t": "Clients stay engaged", "d": "Tasks, chat and visible progress keep momentum alive between sessions." },
+      { "t": "Look premium by default", "d": "Your practice deserves an experience that feels like a high-end studio, not a spreadsheet." },
+      { "t": "Private and secure", "d": "Every record is isolated per coach and client with bank-grade row-level security." }
+    ],
+    "featuresTitle": "Everything a modern practice needs",
+    "features": [
+      { "t": "Session scheduling", "d": "Plan, hold and track every coaching session." },
+      { "t": "Growth tasks", "d": "Assign practice, review submissions, give feedback." },
+      { "t": "Realtime chat", "d": "A private channel with every client." },
+      { "t": "Progress tracking", "d": "Metrics and milestones that show the journey." },
+      { "t": "Three languages", "d": "English, Russian and Hebrew with full RTL." },
+      { "t": "Light & dark", "d": "A warm wellness theme and a cinematic dark mode." }
+    ],
+    "storiesTitle": "Stories of change",
+    "stories": [
+      { "q": "My clients finally see their own progress. Renewals went up the first month.", "n": "Maya R.", "r": "Leadership coach" },
+      { "q": "I closed four tools and moved everything here. It feels like my own studio.", "n": "Daniel K.", "r": "Executive coach" },
+      { "q": "The weekly tasks keep me honest. I have never stayed this consistent.", "n": "Anna S.", "r": "Client, 8 months" }
+    ],
+    "pricingTitle": "Simple pricing",
+    "pricingSub": "Start free. Upgrade when your practice grows.",
+    "plans": [
+      { "name": "Starter", "price": "$0", "period": "forever", "points": ["3 active clients", "Sessions & tasks", "Realtime chat", "Progress tracking"], "cta": "Start free", "featured": false },
+      { "name": "Pro", "price": "$29", "period": "per month", "points": ["Unlimited clients", "File attachments", "Priority support", "Custom branding soon"], "cta": "Go Pro", "featured": true },
+      { "name": "Studio", "price": "$79", "period": "per month", "points": ["Team of coaches", "Shared clients", "Analytics suite", "White-label soon"], "cta": "Contact us", "featured": false }
+    ],
+    "faqTitle": "Questions, answered",
+    "faq": [
+      { "q": "Do my clients pay for the platform?", "a": "No. Clients join free by invitation from their coach. Only coaches choose a plan." },
+      { "q": "Can I use it in Hebrew or Russian?", "a": "Yes — the entire interface ships in English, Russian and Hebrew with full right-to-left support." },
+      { "q": "Is my clients' data private?", "a": "Every row in the database is protected by row-level security. A coach sees only their clients; a client sees only their own journey." },
+      { "q": "Can I cancel anytime?", "a": "Yes. Downgrade or cancel in one click — your data stays yours and exportable." }
+    ],
+    "ctaTitle": "Your next chapter starts today",
+    "ctaSub": "Join coaches who turned their practice into a premium experience.",
+    "ctaButton": "Create your free account"
+  }
+}
