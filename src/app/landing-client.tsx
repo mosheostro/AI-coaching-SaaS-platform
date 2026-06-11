@@ -6,6 +6,7 @@ import { Aurora } from "@/components/aurora";
 import { EnergySphere } from "@/components/energy-sphere";
 import { Tilt } from "@/components/tilt";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { SiteFooter } from "@/components/site-footer";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { FadeIn, Stagger, StaggerItem, Counter, motion } from "@/components/motion";
 import type { Dictionary } from "@/i18n";
@@ -25,9 +26,9 @@ export function LandingClient({
   locale: Locale;
 }) {
   return (
-    <main className="min-h-screen">
+    <main id="content" className="min-h-screen">
       {/* ============ Header ============ */}
-      <header className="sticky top-0 z-40 glass">
+      <header dir="ltr" className="sticky top-0 z-40 glass">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 py-3.5 sm:px-6">
           <span className="shrink-0 font-heading text-lg font-semibold">{appName}</span>
           <div className="flex items-center gap-2 sm:gap-2.5">
@@ -247,12 +248,10 @@ export function LandingClient({
         </FadeIn>
       </section>
 
-      <footer className="flex flex-col items-center gap-4 border-t border-line py-8 text-center text-xs text-soft">
-        <span className="sm:hidden">
-          <LocaleSwitcher current={locale} />
-        </span>
-        © {new Date().getFullYear()} {appName}
-      </footer>
+      <div className="flex justify-center pb-6 sm:hidden">
+        <LocaleSwitcher current={locale} />
+      </div>
+      <SiteFooter locale={locale} />
     </main>
   );
 }

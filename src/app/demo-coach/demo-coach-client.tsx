@@ -248,7 +248,7 @@ export function DemoCoachClient({ locale }: { locale: Locale }) {
     <main className="mesh-bg relative flex min-h-[100dvh] flex-col">
       <Aurora className="absolute inset-0 h-full w-full opacity-50" />
 
-      <header className="relative z-10 flex items-center justify-between px-4 py-3 sm:px-6">
+      <header dir="ltr" className="relative z-10 flex items-center justify-between px-4 py-3 sm:px-6">
         <Link href="/" className="font-heading text-lg font-semibold">
           Coach Online
         </Link>

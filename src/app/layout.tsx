@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Inter_Tight, Noto_Sans_Hebrew } from "next/font/google";
 import { getLocale } from "@/i18n";
 import { dirFor } from "@/i18n/config";
+import { BackToTop } from "@/components/back-to-top";
 import "./globals.css";
 
 const body = Inter({
@@ -72,7 +73,16 @@ export default async function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
-      <body>{children}</body>
+      <body>
+        <a
+          href="#content"
+          className="sr-only focus:not-sr-only focus:fixed focus:start-3 focus:top-3 focus:z-[100] focus:rounded-xl focus:bg-surface focus:px-4 focus:py-2 focus:shadow-lift"
+        >
+          Skip to content
+        </a>
+        {children}
+        <BackToTop />
+      </body>
     </html>
   );
 }

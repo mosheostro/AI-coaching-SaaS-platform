@@ -78,8 +78,8 @@ export function AppShell({
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
       {/* Mobile top bar */}
-      <header className="glass sticky top-0 z-40 flex items-center justify-between px-4 py-3 md:hidden">
-        <span className="font-heading text-lg font-semibold">{appName}</span>
+      <header dir="ltr" className="glass sticky top-0 z-40 flex items-center justify-between px-4 py-3 md:hidden">
+        <Link href="/" className="font-heading text-lg font-semibold">{appName}</Link>
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <button
@@ -118,14 +118,14 @@ export function AppShell({
       {/* Desktop sidebar */}
       <aside className="glass sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-e border-line md:flex">
         <div className="flex items-center justify-between border-b border-line/60 px-5 py-4">
-          <span className="font-heading text-lg font-semibold">{appName}</span>
+          <Link href="/" className="font-heading text-lg font-semibold">{appName}</Link>
           <ThemeToggle />
         </div>
         <nav className="flex-1 space-y-1 p-3">{navLinks}</nav>
         {userBlock}
       </aside>
 
-      <main className="mesh-bg w-full max-w-6xl flex-1 p-4 sm:p-6 md:p-8">
+      <main id="content" className="mesh-bg w-full max-w-6xl flex-1 p-4 sm:p-6 md:p-8">
         <div className="relative z-10">{children}</div>
       </main>
     </div>
