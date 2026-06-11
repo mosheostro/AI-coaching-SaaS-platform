@@ -140,7 +140,7 @@ export function AiCoachClient({
       </aside>
 
       {/* Chat */}
-      <section className="card flex h-[72vh] flex-col p-0">
+      <section className="card flex h-[72dvh] flex-col p-0">
         {/* Mode picker (new sessions only) */}
         {!activeId && messages.length === 0 && (
           <div className="border-b border-line/60 p-4">

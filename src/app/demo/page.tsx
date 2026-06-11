@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { getDictionary } from "@/i18n";
 import { DemoClient } from "./demo-client";
 
@@ -8,6 +9,9 @@ export const metadata = {
 };
 
 export default async function DemoPage() {
+  // No LLM key configured → serve the deterministic demo instead.
+  if (!process.env.ANTHROPIC_API_KEY) redirect("/demo-coach");
+
   const { t, locale } = await getDictionary();
 
   return (

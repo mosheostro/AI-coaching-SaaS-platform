@@ -76,7 +76,7 @@ export function ChatThread({
   }
 
   return (
-    <div className="card flex flex-col h-[70vh] p-0">
+    <div className="card flex flex-col h-[70dvh] p-0">
       <div className="flex-1 overflow-y-auto p-4 space-y-2">
         {messages.map((m) => {
           const own = m.sender_id === currentUserId;
