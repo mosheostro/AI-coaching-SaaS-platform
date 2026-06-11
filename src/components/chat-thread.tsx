@@ -98,9 +98,10 @@ export function ChatThread({
                     own ? "text-canvas/60" : "text-soft/70"
                   }`}
                 >
-                  {new Date(m.created_at).toLocaleTimeString([], {
+                  {new Date(m.created_at).toLocaleTimeString("en-GB", {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                   })}
                 </p>
               </div>

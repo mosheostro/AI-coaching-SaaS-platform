@@ -2,12 +2,12 @@ import { AppShell } from "@/components/app-shell";
 import { requireProfile } from "@/lib/auth";
 import { getDictionary } from "@/i18n";
 
-export default async function ClientLayout({
+export default async function AiCoachLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const profile = await requireProfile("client");
+  const profile = await requireProfile();
   const { t, locale } = await getDictionary();
 
   return (
@@ -17,11 +17,9 @@ export default async function ClientLayout({
       userName={profile.full_name}
       logoutLabel={t.nav.logout}
       nav={[
-        { href: "/client/dashboard", label: t.nav.dashboard },
-        { href: "/client/tasks", label: t.nav.tasks },
-        { href: "/client/sessions", label: t.nav.sessions },
-        { href: "/client/chat", label: t.nav.chat },
+        { href: "/dashboard", label: t.nav.dashboard },
         { href: "/ai-coach", label: t.ai.title },
+        { href: "/ai-coach/insights", label: t.ai.insights },
       ]}
     >
       {children}

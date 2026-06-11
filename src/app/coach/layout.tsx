@@ -22,6 +22,7 @@ export default async function CoachLayout({
         { href: "/coach/sessions", label: t.nav.sessions },
         { href: "/coach/tasks", label: t.nav.tasks },
         { href: "/coach/chat", label: t.nav.chat },
+        { href: "/ai-coach", label: t.ai.title },
       ]}
     >
       {children}

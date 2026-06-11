@@ -2,39 +2,64 @@
 
 import { useEffect, useState } from "react";
 
+export type ThemeMode = "system" | "light" | "dark" | "cosmic" | "minimal";
+
+const MODES: { value: ThemeMode; label: string }[] = [
+  { value: "system", label: "Auto" },
+  { value: "light", label: "Wellness" },
+  { value: "dark", label: "Dark" },
+  { value: "cosmic", label: "Cosmic" },
+  { value: "minimal", label: "Minimal" },
+];
+
+export function applyTheme(mode: ThemeMode) {
+  const root = document.documentElement;
+  const sysDark = matchMedia("(prefers-color-scheme: dark)").matches;
+  const dark = mode === "dark" || mode === "cosmic" || (mode === "system" && sysDark);
+  root.classList.toggle("dark", dark);
+  root.classList.toggle("cosmic", mode === "cosmic");
+  root.classList.toggle("minimal", mode === "minimal");
+}
+
 export function ThemeToggle() {
-  const [dark, setDark] = useState(false);
+  const [mode, setMode] = useState<ThemeMode>("system");
 
   useEffect(() => {
-    setDark(document.documentElement.classList.contains("dark"));
+    try {
+      const saved = localStorage.getItem("theme") as ThemeMode | null;
+      if (saved && MODES.some((m) => m.value === saved)) setMode(saved);
+    } catch {}
   }, []);
 
-  function toggle() {
-    const next = !dark;
-    setDark(next);
-    document.documentElement.classList.toggle("dark", next);
+  // Follow OS preference live while in system mode
+  useEffect(() => {
+    if (mode !== "system") return;
+    const mq = matchMedia("(prefers-color-scheme: dark)");
+    const onChange = () => applyTheme("system");
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, [mode]);
+
+  function change(next: ThemeMode) {
+    setMode(next);
+    applyTheme(next);
     try {
-      localStorage.setItem("theme", next ? "dark" : "light");
+      localStorage.setItem("theme", next);
     } catch {}
   }
 
   return (
-    <button
-      type="button"
-      onClick={toggle}
-      aria-label="Toggle theme"
-      className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-line bg-surface text-soft hover:text-ink hover:border-sage/50 transition"
+    <select
+      aria-label="Theme"
+      className="input w-auto py-1.5"
+      value={mode}
+      onChange={(e) => change(e.target.value as ThemeMode)}
     >
-      {dark ? (
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-          <circle cx="12" cy="12" r="4" />
-          <path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
-        </svg>
-      ) : (
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
-        </svg>
-      )}
-    </button>
+      {MODES.map((m) => (
+        <option key={m.value} value={m.value}>
+          {m.label}
+        </option>
+      ))}
+    </select>
   );
 }

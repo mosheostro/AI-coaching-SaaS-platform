@@ -84,6 +84,41 @@
       "returned": "Returned"
     }
   },
+  "ai": {
+    "title": "AI Coach",
+    "subtitle": "Your always-available coaching companion",
+    "newSession": "New session",
+    "insights": "Insights",
+    "modeLabel": "Coaching mode",
+    "thinking": "Thinking…",
+    "emptySessions": "No sessions yet. Choose a mode and start your first conversation.",
+    "firstPrompt": "What would you like to work on today?",
+    "insightsTitle": "Growth dashboard",
+    "noMemories": "Your insights will appear here as you talk with your AI coach.",
+    "notConfigured": "The AI coach is not configured yet. Add ANTHROPIC_API_KEY to the server environment.",
+    "modes": {
+      "life": "Life coaching",
+      "integral": "Integral coaching",
+      "wellness": "Wellness",
+      "nutrition": "Nutrition reflection",
+      "relationships": "Relationships",
+      "career": "Career",
+      "leadership": "Leadership",
+      "mindfulness": "Mindfulness",
+      "spiritual": "Meaning & purpose",
+      "goals": "Goal achievement"
+    },
+    "kinds": {
+      "goal": "Goals",
+      "value": "Values",
+      "priority": "Priorities",
+      "theme": "Recurring themes",
+      "commitment": "Commitments",
+      "achievement": "Achievements",
+      "milestone": "Milestones",
+      "summary": "Session insights"
+    }
+  },
   "landing": {
     "hero": "Become who you are meant to be.",
     "sub": "A premium space where coaches and clients grow together — sessions, practice, dialogue and visible progress, in one calm place.",

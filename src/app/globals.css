@@ -33,6 +33,35 @@
   --c-shadow: 0 0 0;
 }
 
+/* Theme 3 — Cosmic Growth: deep space, luminous violet, starlight gold.
+   Applied together with .dark so dark-mode variants stay active. */
+.cosmic {
+  --c-bg: 8 9 20;
+  --c-bg2: 12 13 28;
+  --c-surface: 17 18 36;
+  --c-border: 42 44 76;
+  --c-ink: 233 233 246;
+  --c-muted: 148 152 186;
+  --c-accent: 139 124 246;
+  --c-accent-deep: 198 190 255;
+  --c-gold: 226 196 134;
+  --c-shadow: 0 0 0;
+}
+
+/* Theme 4 — Minimal Professional: cool monochrome, near-black accent. */
+.minimal {
+  --c-bg: 250 250 251;
+  --c-bg2: 244 244 246;
+  --c-surface: 255 255 255;
+  --c-border: 228 229 233;
+  --c-ink: 24 24 27;
+  --c-muted: 113 113 122;
+  --c-accent: 63 63 70;
+  --c-accent-deep: 24 24 27;
+  --c-gold: 82 82 91;
+  --c-shadow: 24 24 27;
+}
+
 @layer base {
   html {
     @apply antialiased scroll-smooth;

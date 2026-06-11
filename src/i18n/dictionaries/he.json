@@ -84,6 +84,41 @@
       "returned": "הוחזר"
     }
   },
+  "ai": {
+    "title": "מאמן AI",
+    "subtitle": "מאמן אישי זמין בכל רגע",
+    "newSession": "מפגש חדש",
+    "insights": "תובנות",
+    "modeLabel": "מצב אימון",
+    "thinking": "חושב…",
+    "emptySessions": "אין עדיין מפגשים. בחרו מצב והתחילו שיחה ראשונה.",
+    "firstPrompt": "על מה תרצו לעבוד היום?",
+    "insightsTitle": "לוח צמיחה",
+    "noMemories": "התובנות שלכם יופיעו כאן ככל שתשוחחו עם מאמן ה-AI.",
+    "notConfigured": "מאמן ה-AI עדיין לא מוגדר. הוסיפו ANTHROPIC_API_KEY לסביבת השרת.",
+    "modes": {
+      "life": "אימון חיים",
+      "integral": "אימון אינטגרלי",
+      "wellness": "Wellness",
+      "nutrition": "רפלקציה תזונתית",
+      "relationships": "מערכות יחסים",
+      "career": "קריירה",
+      "leadership": "מנהיגות",
+      "mindfulness": "מיינדפולנס",
+      "spiritual": "משמעות וייעוד",
+      "goals": "השגת מטרות"
+    },
+    "kinds": {
+      "goal": "מטרות",
+      "value": "ערכים",
+      "priority": "עדיפויות",
+      "theme": "נושאים חוזרים",
+      "commitment": "התחייבויות",
+      "achievement": "הישגים",
+      "milestone": "אבני דרך",
+      "summary": "תובנות מפגשים"
+    }
+  },
   "landing": {
     "hero": "להפוך למי שנועדת להיות.",
     "sub": "מרחב פרימיום שבו מאמנים ולקוחות צומחים יחד — מפגשים, תרגול, דיאלוג והתקדמות נראית, במקום אחד ושקט.",

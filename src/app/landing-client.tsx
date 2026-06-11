@@ -26,15 +26,17 @@ export function LandingClient({
     <main className="min-h-screen">
       {/* ============ Header ============ */}
       <header className="sticky top-0 z-40 glass">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3.5">
-          <span className="font-heading text-lg font-semibold">{appName}</span>
-          <div className="flex items-center gap-2.5">
-            <LocaleSwitcher current={locale} />
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 py-3.5 sm:px-6">
+          <span className="shrink-0 font-heading text-lg font-semibold">{appName}</span>
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            <span className="hidden sm:block">
+              <LocaleSwitcher current={locale} />
+            </span>
             <ThemeToggle />
             <Link href="/login" className="btn-secondary hidden sm:inline-flex">
               {t.ctaSecondary}
             </Link>
-            <Link href="/signup" className="btn-primary">
+            <Link href="/signup" className="btn-primary whitespace-nowrap">
               {t.cta}
             </Link>
           </div>
@@ -49,7 +51,7 @@ export function LandingClient({
             <p className="eyebrow">{t.heroEyebrow}</p>
           </FadeIn>
           <FadeIn delay={0.1}>
-            <h1 className="mt-5 text-5xl font-semibold leading-[1.05] md:text-7xl">
+            <h1 className="mt-5 text-4xl font-semibold leading-[1.05] sm:text-5xl md:text-7xl">
               <span className="text-gradient">{t.hero}</span>
             </h1>
           </FadeIn>
@@ -71,7 +73,7 @@ export function LandingClient({
           </FadeIn>
 
           {/* animated stats */}
-          <Stagger className="mt-20 grid w-full max-w-2xl grid-cols-3 gap-4">
+          <Stagger className="mt-20 grid w-full max-w-2xl grid-cols-1 gap-4 sm:grid-cols-3">
             {[
               [1200, t.stats.coaches],
               [9400, t.stats.clients],
@@ -237,7 +239,10 @@ export function LandingClient({
         </FadeIn>
       </section>
 
-      <footer className="border-t border-line py-8 text-center text-xs text-soft">
+      <footer className="flex flex-col items-center gap-4 border-t border-line py-8 text-center text-xs text-soft">
+        <span className="sm:hidden">
+          <LocaleSwitcher current={locale} />
+        </span>
         © {new Date().getFullYear()} {appName}
       </footer>
     </main>
@@ -247,17 +252,23 @@ export function LandingClient({
 function FaqItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="card card-hover cursor-pointer p-0" onClick={() => setOpen(!open)}>
-      <div className="flex items-center justify-between p-5">
+    <div className="card card-hover p-0">
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center justify-between gap-4 p-5 text-start"
+      >
         <h3 className="font-medium">{q}</h3>
         <motion.span
+          aria-hidden
           animate={{ rotate: open ? 45 : 0 }}
           transition={{ duration: 0.25 }}
           className="text-lg text-soft"
         >
           +
         </motion.span>
-      </div>
+      </button>
       <motion.div
         initial={false}
         animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }}

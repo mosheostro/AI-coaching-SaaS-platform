@@ -9,7 +9,9 @@ const ROLE_HOME: Record<string, string> = {
   admin: "/admin",
 };
 
-const PROTECTED_PREFIXES = ["/coach", "/client", "/admin", "/dashboard"];
+const PROTECTED_PREFIXES = ["/coach", "/client", "/admin", "/dashboard", "/ai-coach"];
+// Sections any authenticated role may use
+const SHARED_PREFIXES = ["/ai-coach"];
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -62,7 +64,9 @@ export async function updateSession(request: NextRequest) {
     // Role-gate sections; admins may go anywhere.
     if (role !== "admin") {
       const allowed =
-        path === "/dashboard" || path.startsWith(`/${role}`);
+        path === "/dashboard" ||
+        path.startsWith(`/${role}`) ||
+        SHARED_PREFIXES.some((p) => path.startsWith(p));
       if (!allowed) {
         const url = request.nextUrl.clone();
         url.pathname = home;
