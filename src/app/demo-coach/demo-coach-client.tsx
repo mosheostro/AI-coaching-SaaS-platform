@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Aurora } from "@/components/aurora";
 import { EnergySphere } from "@/components/energy-sphere";
+import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { FadeIn, motion } from "@/components/motion";
 import {
@@ -248,13 +249,26 @@ export function DemoCoachClient({ locale }: { locale: Locale }) {
     <main className="mesh-bg relative flex min-h-[100dvh] flex-col">
       <Aurora className="absolute inset-0 h-full w-full opacity-50" />
 
-      <header dir="ltr" className="relative z-10 flex items-center justify-between px-4 py-3 sm:px-6">
-        <Link href="/" className="font-heading text-lg font-semibold">
-          Coach Online
-        </Link>
+      <header dir="ltr" className="relative z-10 flex items-center justify-between gap-2 px-3 py-3 sm:px-6">
         <div className="flex items-center gap-2">
+          <Link
+            href="/"
+            aria-label="Home"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-surface text-soft transition hover:border-sage/50 hover:text-ink"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 10.5 12 3l9 7.5" />
+              <path d="M5 9.5V21h14V9.5" />
+            </svg>
+          </Link>
+          <Link href="/" className="hidden font-heading text-lg font-semibold sm:block">
+            Coach Online
+          </Link>
+        </div>
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <LocaleSwitcher current={locale} />
           <ThemeToggle />
-          <Link href="/login" className="btn-secondary hidden sm:inline-flex">
+          <Link href="/login" className="btn-secondary hidden md:inline-flex">
             {ui.login}
           </Link>
         </div>

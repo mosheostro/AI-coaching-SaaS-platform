@@ -1,12 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Status = "idle" | "sending" | "sent" | "error";
 
+function rnd() {
+  return 1 + Math.floor(Math.random() * 9);
+}
+
 /**
- * Shared inquiry form — sends directly from the site via /api/contact
- * (no email client needed). Falls back to a direct mailto link on failure.
+ * Shared inquiry form — sends directly from the site via /api/contact.
+ * Includes honeypot, "I'm not a robot" checkbox and an arithmetic captcha.
  */
 export function InquiryForm({
   email,
@@ -22,8 +26,23 @@ export function InquiryForm({
   const [subject, setSubject] = useState(subjects?.[0] ?? "");
   const [message, setMessage] = useState("");
   const [website, setWebsite] = useState(""); // honeypot
+  const [human, setHuman] = useState(false);
+  const [capA, setCapA] = useState(0);
+  const [capB, setCapB] = useState(0);
+  const [capAnswer, setCapAnswer] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    setCapA(rnd());
+    setCapB(rnd());
+  }, []);
+
+  function regenCaptcha() {
+    setCapA(rnd());
+    setCapB(rnd());
+    setCapAnswer("");
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -42,6 +61,10 @@ export function InquiryForm({
           message,
           page: subjectPrefix,
           website,
+          human,
+          captchaA: capA,
+          captchaB: capB,
+          captchaAnswer: Number(capAnswer),
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -50,10 +73,12 @@ export function InquiryForm({
       } else {
         setError(data.error ?? "Could not send.");
         setStatus("error");
+        regenCaptcha();
       }
     } catch {
       setError("Network error.");
       setStatus("error");
+      regenCaptcha();
     }
   }
 
@@ -72,6 +97,8 @@ export function InquiryForm({
           onClick={() => {
             setStatus("idle");
             setMessage("");
+            setHuman(false);
+            regenCaptcha();
           }}
           className="btn-secondary mt-5"
         >
@@ -113,7 +140,7 @@ export function InquiryForm({
         </div>
       </div>
 
-      {/* Honeypot — hidden from humans, irresistible to bots */}
+      {/* Honeypot — hidden from humans */}
       <div className="absolute -left-[9999px] top-auto" aria-hidden="true">
         <label htmlFor="iq-website">Website</label>
         <input
@@ -162,6 +189,35 @@ export function InquiryForm({
           required
           className="input"
         />
+      </div>
+
+      {/* Human verification */}
+      <div className="grid gap-3 rounded-xl border border-line bg-canvas2/50 p-4 sm:grid-cols-2 sm:items-center">
+        <label className="flex min-h-[44px] cursor-pointer items-center gap-3">
+          <input
+            type="checkbox"
+            checked={human}
+            onChange={(e) => setHuman(e.target.checked)}
+            required
+            className="h-5 w-5 accent-[rgb(var(--c-accent-deep))]"
+          />
+          <span className="text-sm font-medium">I&apos;m not a robot</span>
+        </label>
+        <div className="flex items-center gap-2">
+          <label htmlFor="iq-captcha" className="whitespace-nowrap text-sm text-soft">
+            {capA} + {capB} =
+          </label>
+          <input
+            id="iq-captcha"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            value={capAnswer}
+            onChange={(e) => setCapAnswer(e.target.value)}
+            required
+            aria-label={`Captcha: what is ${capA} plus ${capB}?`}
+            className="input max-w-[90px]"
+          />
+        </div>
       </div>
 
       {status === "error" && (
