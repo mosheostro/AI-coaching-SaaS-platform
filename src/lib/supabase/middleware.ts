@@ -16,6 +16,18 @@ const SHARED_PREFIXES = ["/ai-coach"];
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
 
+  // Fail soft if the deployment is missing Supabase env vars:
+  // public pages keep working instead of a site-wide 500.
+  if (
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  ) {
+    console.error(
+      "Supabase env vars missing (NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY) — auth middleware skipped."
+    );
+    return response;
+  }
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
