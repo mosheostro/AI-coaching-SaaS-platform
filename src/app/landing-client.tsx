@@ -62,11 +62,11 @@ export function LandingClient({
           </FadeIn>
           <FadeIn delay={0.34}>
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
-              <Link href="/signup" className="btn-primary px-8 py-3.5 text-base ring-glow">
-                {t.cta}
+              <Link href="/demo" className="btn-gold px-8 py-3.5 text-base ring-glow">
+                ✦ {t.tryDemo}
               </Link>
-              <Link href="/login" className="btn-secondary px-8 py-3.5 text-base">
-                {t.ctaSecondary}
+              <Link href="/signup" className="btn-primary px-8 py-3.5 text-base">
+                {t.cta}
               </Link>
             </div>
             <p className="mt-5 text-xs text-soft">{t.heroNote}</p>

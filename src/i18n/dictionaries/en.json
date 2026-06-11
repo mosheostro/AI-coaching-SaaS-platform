@@ -84,6 +84,25 @@
       "returned": "Returned"
     }
   },
+  "demo": {
+    "eyebrow": "Free demo session",
+    "title": "Meet your AI coach",
+    "sub": "A real coaching conversation. No account, no card — just you and a question worth exploring.",
+    "start": "Begin the session",
+    "restart": "Start over",
+    "export": "Download summary",
+    "ctaAfter": "Keep this momentum — your full coach remembers everything",
+    "ctaButton": "Create free account",
+    "disclaimer": "Anonymous demo. Nothing is stored after you leave.",
+    "thinking": "Reflecting…",
+    "phases": {
+      "intake": "Arriving",
+      "exploration": "Exploring",
+      "insight": "Insight",
+      "action": "Action",
+      "closure": "Integration"
+    }
+  },
   "ai": {
     "title": "AI Coach",
     "subtitle": "Your always-available coaching companion",
@@ -124,6 +143,7 @@
     "sub": "A premium space where coaches and clients grow together — sessions, practice, dialogue and visible progress, in one calm place.",
     "cta": "Start your journey",
     "ctaSecondary": "Log in",
+    "tryDemo": "Try a free AI coaching session",
     "heroEyebrow": "Personal transformation platform",
     "heroNote": "Free for your first 3 clients · no card required",
     "stats": { "coaches": "Coaches", "clients": "Clients growing", "sessions": "Sessions held" },
