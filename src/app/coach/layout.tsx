@@ -9,6 +9,7 @@ export default async function CoachLayout({
 }) {
   const profile = await requireProfile("coach");
   const { t, locale } = await getDictionary();
+  const aiEnabled = !!process.env.ANTHROPIC_API_KEY;
 
   return (
     <AppShell
@@ -22,7 +23,7 @@ export default async function CoachLayout({
         { href: "/coach/sessions", label: t.nav.sessions },
         { href: "/coach/tasks", label: t.nav.tasks },
         { href: "/coach/chat", label: t.nav.chat },
-        { href: "/ai-coach", label: t.ai.title },
+        ...(aiEnabled ? [{ href: "/ai-coach", label: t.ai.title }] : []),
       ]}
     >
       {children}

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Aurora } from "@/components/aurora";
 import { EnergySphere } from "@/components/energy-sphere";
+import { FounderSection } from "@/components/founder-section";
 import { Tilt } from "@/components/tilt";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { SiteFooter } from "@/components/site-footer";
@@ -178,6 +179,8 @@ export function LandingClient({
       </section>
 
       {/* ============ 6 · Pricing ============ */}
+      <FounderSection locale={locale} />
+
       <section className="mx-auto max-w-6xl px-6 py-24">
         <FadeIn className="text-center">
           <h2 className="text-3xl font-semibold md:text-4xl">{t.pricingTitle}</h2>

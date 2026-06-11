@@ -8,6 +8,16 @@ export const metadata = { title: "AI Coach" };
 export default async function AiCoachPage() {
   await requireProfile();
   const { t } = await getDictionary();
+
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return (
+      <div className="card mx-auto max-w-lg p-8 text-center">
+        <span className="text-2xl text-sage/60">✦</span>
+        <p className="mt-3 text-soft">{t.ai.notConfigured}</p>
+      </div>
+    );
+  }
+
   const supabase = await createClient();
 
   const { data: sessions } = await supabase
