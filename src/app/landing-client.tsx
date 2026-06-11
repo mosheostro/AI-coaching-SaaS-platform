@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Aurora } from "@/components/aurora";
+import { EnergySphere } from "@/components/energy-sphere";
+import { Tilt } from "@/components/tilt";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { FadeIn, Stagger, StaggerItem, Counter, motion } from "@/components/motion";
@@ -46,6 +48,9 @@ export function LandingClient({
       {/* ============ 1 · Hero ============ */}
       <section className="mesh-bg relative">
         <Aurora className="absolute inset-0 h-full w-full opacity-70" />
+        <div className="pointer-events-none absolute inset-x-0 top-8 z-0 flex justify-center opacity-60 md:top-4 md:opacity-80">
+          <EnergySphere size={460} className="max-w-[88vw]" />
+        </div>
         <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-6 pb-28 pt-24 text-center md:pt-32">
           <FadeIn>
             <p className="eyebrow">{t.heroEyebrow}</p>
@@ -98,13 +103,15 @@ export function LandingClient({
         </FadeIn>
         <Stagger className="mt-14 grid gap-5 md:grid-cols-3">
           {t.journey.map((step, i) => (
-            <StaggerItem key={i} className="card card-hover relative overflow-hidden p-7">
-              <span className="font-heading text-5xl font-semibold text-sage/25">
-                0{i + 1}
-              </span>
-              <h3 className="mt-3 text-xl font-semibold">{step.t}</h3>
-              <p className="mt-2 leading-relaxed text-soft">{step.d}</p>
-              <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-sage/50 to-transparent" />
+            <StaggerItem key={i}>
+              <Tilt className="card card-hover relative h-full overflow-hidden p-7">
+                <span className="font-heading text-5xl font-semibold text-sage/25">
+                  0{i + 1}
+                </span>
+                <h3 className="mt-3 text-xl font-semibold">{step.t}</h3>
+                <p className="mt-2 leading-relaxed text-soft">{step.d}</p>
+                <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-sage/50 to-transparent" />
+              </Tilt>
             </StaggerItem>
           ))}
         </Stagger>
@@ -177,9 +184,9 @@ export function LandingClient({
         </FadeIn>
         <Stagger className="mt-14 grid gap-5 md:grid-cols-3">
           {t.plans.map((p, i) => (
-            <StaggerItem
-              key={i}
-              className={`card relative flex flex-col p-7 ${
+            <StaggerItem key={i}>
+            <Tilt
+              className={`card relative flex h-full flex-col p-7 ${
                 p.featured ? "ring-glow border-sage/50" : "card-hover"
               }`}
             >
@@ -202,6 +209,7 @@ export function LandingClient({
               >
                 {p.cta}
               </Link>
+            </Tilt>
             </StaggerItem>
           ))}
         </Stagger>

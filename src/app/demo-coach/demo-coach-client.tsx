@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Aurora } from "@/components/aurora";
+import { EnergySphere } from "@/components/energy-sphere";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { FadeIn, motion } from "@/components/motion";
 import {
@@ -261,8 +262,11 @@ export function DemoCoachClient({ locale }: { locale: Locale }) {
 
       {!started ? (
         <section className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 pb-20 text-center">
+          <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center opacity-50">
+            <EnergySphere size={420} className="max-w-[85vw]" />
+          </div>
           <FadeIn>
-            <h1 className="max-w-2xl text-4xl font-semibold leading-[1.08] sm:text-5xl md:text-6xl">
+            <h1 className="relative max-w-2xl text-4xl font-semibold leading-[1.08] sm:text-5xl md:text-6xl">
               <span className="text-gradient">{ui.title}</span>
             </h1>
           </FadeIn>
