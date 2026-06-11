@@ -59,8 +59,8 @@ export default async function ContactPage() {
 
       <h2>Write to us</h2>
       <p>
-        Coaching inquiries, support questions, business matters — pick a subject and the form will
-        open a ready-to-send email.
+        Coaching inquiries, support questions, business matters — pick a subject and send your
+        message right here. It goes straight to {FOUNDER.name.split(" ")[0]}&apos;s inbox.
       </p>
       <InquiryForm
         email={FOUNDER.email}

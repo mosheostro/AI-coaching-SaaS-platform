@@ -1,7 +1,9 @@
 import { requireProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { getDictionary } from "@/i18n";
-import { StatCard, EmptyState } from "@/components/ui";
+import { StatCard, EmptyState, ProgressBars } from "@/components/ui";
+import { EnergySphere } from "@/components/energy-sphere";
+import { Tilt } from "@/components/tilt";
 
 export default async function ClientDashboard() {
   const profile = await requireProfile("client");
@@ -34,51 +36,60 @@ export default async function ClientDashboard() {
         .select("metric_key, value, recorded_at")
         .eq("client_id", profile.id)
         .order("recorded_at", { ascending: false })
-        .limit(10),
+        .limit(12),
     ]);
 
   const next = nextSessionRes.data;
+  const metrics = (progressRes.data ?? []).slice().reverse();
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">
-        {t.client.welcome}, {profile.full_name.split(" ")[0]}
-      </h1>
+      <div className="relative flex items-center justify-between overflow-visible">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -end-8 -top-16 opacity-30 md:opacity-50"
+        >
+          <EnergySphere size={180} />
+        </div>
+        <h1 className="relative text-2xl font-semibold">
+          {t.client.welcome}, {profile.full_name.split(" ")[0]}
+        </h1>
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <StatCard label={t.client.openTasks} value={openTasksRes.count ?? 0} />
-        <StatCard label={t.client.completedTasks} value={doneRes.count ?? 0} />
-        <div className="card">
-          <p className="text-slate-500">{t.client.nextSession}</p>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <StatCard label={t.client.openTasks} value={openTasksRes.count ?? 0} icon="✎" />
+        <StatCard label={t.client.completedTasks} value={doneRes.count ?? 0} icon="✦" />
+        <Tilt className="card card-hover relative overflow-hidden">
+          <p className="text-soft">{t.client.nextSession}</p>
           {next ? (
             <>
-              <p className="text-lg font-semibold mt-1">{next.title}</p>
-              <p className="text-slate-500">
+              <p className="mt-1 text-lg font-semibold">{next.title}</p>
+              <p className="text-soft">
                 {new Date(next.scheduled_at).toLocaleString(locale)}
               </p>
             </>
           ) : (
-            <p className="text-slate-400 mt-1">{t.client.noSessions}</p>
+            <p className="mt-1 text-soft/70">{t.client.noSessions}</p>
           )}
-        </div>
+          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
+        </Tilt>
       </div>
 
       <section>
-        <h2 className="font-semibold mb-3">{t.nav.progress}</h2>
-        {!progressRes.data || progressRes.data.length === 0 ? (
-          <EmptyState message="—" />
+        <h2 className="mb-3 font-semibold">{t.nav.progress}</h2>
+        {metrics.length === 0 ? (
+          <EmptyState message={t.client.noTasks} />
         ) : (
-          <div className="card divide-y divide-slate-100 p-0">
-            {progressRes.data.map((m, i) => (
-              <div key={i} className="flex items-center justify-between px-5 py-3">
-                <span className="text-slate-600">{m.metric_key}</span>
-                <span className="font-medium">{m.value}</span>
-                <span className="text-slate-400 text-xs">
-                  {new Date(m.recorded_at).toLocaleDateString(locale)}
-                </span>
-              </div>
-            ))}
-          </div>
+          <ProgressBars
+            data={metrics.map((m) => ({
+              label: m.metric_key,
+              value: Number(m.value),
+              hint: new Date(m.recorded_at).toLocaleDateString(locale, {
+                day: "numeric",
+                month: "short",
+              }),
+            }))}
+          />
         )}
       </section>
     </div>

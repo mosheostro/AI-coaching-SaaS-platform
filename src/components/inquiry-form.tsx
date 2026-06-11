@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 
+type Status = "idle" | "sending" | "sent" | "error";
+
 /**
- * Shared inquiry form. Opens the visitor's email client with a
- * pre-filled message (no email backend required), then shows a
- * success state with a direct-email fallback.
+ * Shared inquiry form — sends directly from the site via /api/contact
+ * (no email client needed). Falls back to a direct mailto link on failure.
  */
 export function InquiryForm({
   email,
@@ -20,33 +21,61 @@ export function InquiryForm({
   const [from, setFrom] = useState("");
   const [subject, setSubject] = useState(subjects?.[0] ?? "");
   const [message, setMessage] = useState("");
-  const [sent, setSent] = useState(false);
+  const [website, setWebsite] = useState(""); // honeypot
+  const [status, setStatus] = useState<Status>("idle");
+  const [error, setError] = useState("");
 
-  function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
-    const s = encodeURIComponent(
-      `[${subjectPrefix}] ${subject || "Inquiry"}${name ? ` — ${name}` : ""}`
-    );
-    const body = encodeURIComponent(
-      `${message}\n\n—\nFrom: ${name}${from ? ` <${from}>` : ""}`
-    );
-    window.location.href = `mailto:${email}?subject=${s}&body=${body}`;
-    setSent(true);
+    if (status === "sending") return;
+    setStatus("sending");
+    setError("");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          email: from,
+          subject,
+          message,
+          page: subjectPrefix,
+          website,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setStatus("sent");
+      } else {
+        setError(data.error ?? "Could not send.");
+        setStatus("error");
+      }
+    } catch {
+      setError("Network error.");
+      setStatus("error");
+    }
   }
 
-  if (sent) {
+  if (status === "sent") {
     return (
-      <div className="card mt-4 p-6 text-center">
-        <span className="text-2xl text-sage">✓</span>
-        <p className="mt-2 font-medium">Your email app should now be open with the message ready to send.</p>
-        <p className="mt-2 text-sm text-soft">
-          Nothing happened? Email directly:{" "}
-          <a href={`mailto:${email}`} className="text-sage-deep underline">
-            {email}
-          </a>
+      <div className="card mt-4 p-8 text-center">
+        <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-sage/15 text-xl text-sage-deep">
+          ✓
+        </span>
+        <p className="mt-4 text-lg font-semibold">Message sent</p>
+        <p className="mt-1.5 text-sm text-soft">
+          Thank you, {name.split(" ")[0] || "friend"} — we&apos;ll reply to{" "}
+          <span className="text-ink">{from}</span> as soon as possible.
         </p>
-        <button onClick={() => setSent(false)} className="btn-secondary mt-4">
-          Edit message
+        <button
+          onClick={() => {
+            setStatus("idle");
+            setMessage("");
+          }}
+          className="btn-secondary mt-5"
+        >
+          Send another message
         </button>
       </div>
     );
@@ -83,6 +112,19 @@ export function InquiryForm({
           />
         </div>
       </div>
+
+      {/* Honeypot — hidden from humans, irresistible to bots */}
+      <div className="absolute -left-[9999px] top-auto" aria-hidden="true">
+        <label htmlFor="iq-website">Website</label>
+        <input
+          id="iq-website"
+          tabIndex={-1}
+          autoComplete="off"
+          value={website}
+          onChange={(e) => setWebsite(e.target.value)}
+        />
+      </div>
+
       <div>
         <label htmlFor="iq-subject" className="mb-1 block text-sm font-medium">
           Subject
@@ -121,8 +163,25 @@ export function InquiryForm({
           className="input"
         />
       </div>
-      <button type="submit" className="btn-primary">
-        Send message
+
+      {status === "error" && (
+        <p className="text-sm text-red-500">
+          {error}{" "}
+          <a href={`mailto:${email}`} className="underline">
+            Email us directly: {email}
+          </a>
+        </p>
+      )}
+
+      <button type="submit" disabled={status === "sending"} className="btn-primary w-full sm:w-auto">
+        {status === "sending" ? (
+          <span className="inline-flex items-center gap-2">
+            <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-canvas/40 border-t-canvas" />
+            Sending…
+          </span>
+        ) : (
+          "Send message"
+        )}
       </button>
     </form>
   );

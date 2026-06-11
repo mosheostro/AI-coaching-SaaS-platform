@@ -3,6 +3,7 @@ import { requireProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { getDictionary } from "@/i18n";
 import { StatCard, StatusBadge, EmptyState } from "@/components/ui";
+import { EnergySphere } from "@/components/energy-sphere";
 
 export default async function CoachDashboard() {
   const profile = await requireProfile("coach");
@@ -34,11 +35,18 @@ export default async function CoachDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">
+      {/* Greeting with ambient sphere */}
+      <div className="relative flex flex-wrap items-center justify-between gap-3 overflow-visible">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -end-8 -top-16 opacity-30 md:opacity-50"
+        >
+          <EnergySphere size={180} />
+        </div>
+        <h1 className="relative text-2xl font-semibold">
           {t.coach.welcome}, {profile.full_name.split(" ")[0]}
         </h1>
-        <div className="flex gap-2">
+        <div className="relative flex gap-2">
           <Link href="/coach/sessions" className="btn-primary">
             {t.coach.newSession}
           </Link>
@@ -48,29 +56,35 @@ export default async function CoachDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <StatCard label={t.coach.activeClients} value={clientsRes.count ?? 0} />
-        <StatCard label={t.coach.upcomingSessions} value={sessions.length} />
-        <StatCard label={t.coach.pendingReviews} value={reviewsRes.count ?? 0} />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <StatCard label={t.coach.activeClients} value={clientsRes.count ?? 0} icon="✦" />
+        <StatCard label={t.coach.upcomingSessions} value={sessions.length} icon="◷" />
+        <StatCard label={t.coach.pendingReviews} value={reviewsRes.count ?? 0} icon="✎" />
       </div>
 
       <section>
-        <h2 className="font-semibold mb-3">{t.coach.upcomingSessions}</h2>
+        <h2 className="mb-3 font-semibold">{t.coach.upcomingSessions}</h2>
         {sessions.length === 0 ? (
           <EmptyState message={t.coach.noSessions} />
         ) : (
-          <div className="card divide-y divide-slate-100 p-0">
+          <div className="card divide-y divide-line/60 p-0">
             {sessions.map((s) => (
-              <div key={s.id} className="flex items-center justify-between px-5 py-3">
+              <div
+                key={s.id}
+                className="flex items-center justify-between px-5 py-3 transition hover:bg-canvas2/50"
+              >
                 <div>
                   <p className="font-medium">{s.title}</p>
-                  <p className="text-slate-500">
+                  <p className="text-soft">
                     {(s.client as { full_name: string } | null)?.full_name} ·{" "}
                     {new Date(s.scheduled_at).toLocaleString(locale)} ·{" "}
                     {s.duration_min} {t.common.minutes}
                   </p>
                 </div>
-                <StatusBadge status={s.status} label={t.common.statuses[s.status as keyof typeof t.common.statuses]} />
+                <StatusBadge
+                  status={s.status}
+                  label={t.common.statuses[s.status as keyof typeof t.common.statuses]}
+                />
               </div>
             ))}
           </div>
