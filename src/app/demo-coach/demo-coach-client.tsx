@@ -76,6 +76,7 @@ export function DemoCoachClient({ locale }: { locale: Locale }) {
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
+  const listeningRef = useRef(false);
 
   const showConversion = session.state === "conversion" && !typing;
 
@@ -189,30 +190,56 @@ export function DemoCoachClient({ locale }: { locale: Locale }) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SR) return;
+
+    // Tap again to STOP — the text stays in the input so you can edit, then press Send.
     if (listening) {
-      recognitionRef.current?.stop();
+      listeningRef.current = false;
+      try {
+        recognitionRef.current?.stop();
+      } catch {}
       setListening(false);
+      inputRef.current?.focus();
       return;
     }
+
     const rec = new SR();
     recognitionRef.current = rec;
     rec.lang = SPEECH_LANG[lang] ?? "en-US";
-    rec.interimResults = false;
+    // Continuous dictation: keep listening through pauses until the user taps stop.
+    rec.continuous = true;
+    rec.interimResults = true;
     rec.maxAlternatives = 1;
+
+    let finals = "";
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     rec.onresult = (ev: any) => {
-      const text = ev.results?.[0]?.[0]?.transcript ?? "";
+      let interim = "";
+      for (let i = ev.resultIndex; i < ev.results.length; i++) {
+        const r = ev.results[i];
+        if (r.isFinal) finals += r[0].transcript + " ";
+        else interim += r[0].transcript;
+      }
+      setDraft((finals + interim).trimStart());
+    };
+    rec.onerror = () => {
+      listeningRef.current = false;
       setListening(false);
-      if (text.trim()) {
-        setDraft(text);
-        setTimeout(() => {
-          const form = inputRef.current?.form;
-          form?.requestSubmit();
-        }, 150);
+    };
+    // Browsers cut recognition after short silences — restart while the mic is on.
+    rec.onend = () => {
+      if (listeningRef.current) {
+        try {
+          rec.start();
+        } catch {
+          listeningRef.current = false;
+          setListening(false);
+        }
+      } else {
+        setListening(false);
       }
     };
-    rec.onerror = () => setListening(false);
-    rec.onend = () => setListening(false);
+
+    listeningRef.current = true;
     setListening(true);
     rec.start();
   }
