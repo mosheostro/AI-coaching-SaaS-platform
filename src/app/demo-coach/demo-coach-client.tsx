@@ -64,7 +64,7 @@ export function DemoCoachClient({ locale }: { locale: Locale }) {
   const [canResume, setCanResume] = useState(false);
   const [session, setSession] = useState<EngineSession>(newSession());
   const [turns, setTurns] = useState<Turn[]>([]);
-  const [reveal, setReveal] = useState(""); // word-by-word reveal buffer
+  const [reveal, setReveal] = useState("");
   const [typing, setTyping] = useState(false);
   const [draft, setDraft] = useState("");
   const [voice, setVoice] = useState(false);
@@ -112,7 +112,6 @@ export function DemoCoachClient({ locale }: { locale: Locale }) {
     [voice, lang]
   );
 
-  /** Simulated thinking + word-by-word reveal. */
   const deliver = useCallback(
     (text: string, history: Turn[], nextSession: EngineSession) => {
       setTyping(true);
@@ -206,7 +205,6 @@ export function DemoCoachClient({ locale }: { locale: Locale }) {
       setListening(false);
       if (text.trim()) {
         setDraft(text);
-        // auto-send after voice input
         setTimeout(() => {
           const form = inputRef.current?.form;
           form?.requestSubmit();
@@ -244,35 +242,80 @@ export function DemoCoachClient({ locale }: { locale: Locale }) {
       session.state === "conversion" ? "closure" : session.state
     )
   );
+  const currentStage = VISIBLE_STAGES[Math.min(stageIdx, VISIBLE_STAGES.length - 1)];
 
   return (
     <main className="mesh-bg relative flex min-h-[100dvh] flex-col">
       <Aurora className="absolute inset-0 h-full w-full opacity-50" />
 
-      <header dir="ltr" className="relative z-10 flex items-center justify-between gap-2 px-3 py-3 sm:px-6">
-        <div className="flex items-center gap-2">
-          <Link
-            href="/"
-            aria-label="Home"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-surface text-soft transition hover:border-sage/50 hover:text-ink"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 10.5 12 3l9 7.5" />
-              <path d="M5 9.5V21h14V9.5" />
-            </svg>
-          </Link>
-          <Link href="/" className="hidden font-heading text-lg font-semibold sm:block">
-            Coach Online
-          </Link>
+      {/* Global control bar — sticky, always visible (Home / Language / Theme / Restart) */}
+      <div dir="ltr" className="glass sticky top-0 z-30">
+        <div className="flex items-center justify-between gap-2 px-3 py-2 sm:px-6">
+          <div className="flex min-w-0 items-center gap-2">
+            <Link
+              href="/"
+              aria-label="Home"
+              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-line bg-surface text-soft transition hover:border-sage/50 hover:text-ink"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 10.5 12 3l9 7.5" />
+                <path d="M5 9.5V21h14V9.5" />
+              </svg>
+            </Link>
+            <Link href="/" className="hidden truncate font-heading text-lg font-semibold sm:block">
+              Coach Online
+            </Link>
+          </div>
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+            <LocaleSwitcher current={locale} />
+            <ThemeToggle />
+            {started && (
+              <button
+                type="button"
+                onClick={restart}
+                aria-label={ui.restart}
+                title={ui.restart}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-surface text-soft transition hover:border-sage/50 hover:text-ink"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 12a9 9 0 1 0 3-6.7" />
+                  <path d="M3 4v5h5" />
+                </svg>
+              </button>
+            )}
+            <Link href="/login" className="btn-secondary hidden md:inline-flex">
+              {ui.login}
+            </Link>
+          </div>
         </div>
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          <LocaleSwitcher current={locale} />
-          <ThemeToggle />
-          <Link href="/login" className="btn-secondary hidden md:inline-flex">
-            {ui.login}
-          </Link>
-        </div>
-      </header>
+
+        {/* Session progress — part of the sticky bar, fully visible on mobile */}
+        {started && (
+          <div className="border-t border-line/40 px-3 pb-2 pt-1.5 sm:px-6">
+            <div className="flex items-center gap-1 sm:gap-2">
+              {VISIBLE_STAGES.map((s, i) => (
+                <div key={s} className="flex flex-1 flex-col items-center gap-1">
+                  <div
+                    className={`h-1.5 w-full rounded-full transition-colors duration-500 ${
+                      i <= stageIdx ? "bg-sage" : "bg-line"
+                    }`}
+                  />
+                  <span
+                    className={`hidden text-[10px] sm:block ${
+                      i === stageIdx ? "font-medium text-ink" : "text-soft/70"
+                    }`}
+                  >
+                    {ui.stages[s]}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <p className="mt-1 text-center text-[11px] font-medium text-ink sm:hidden">
+              {ui.stages[currentStage]} · {stageIdx + 1}/{VISIBLE_STAGES.length}
+            </p>
+          </div>
+        )}
+      </div>
 
       {!started ? (
         <section className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 pb-20 text-center">
@@ -285,12 +328,12 @@ export function DemoCoachClient({ locale }: { locale: Locale }) {
             </h1>
           </FadeIn>
           <FadeIn delay={0.15}>
-            <p className="mt-6 max-w-xl text-base leading-relaxed text-soft md:text-lg">
+            <p className="relative mt-6 max-w-xl text-base leading-relaxed text-soft md:text-lg">
               {ui.sub}
             </p>
           </FadeIn>
           <FadeIn delay={0.3}>
-            <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row">
+            <div className="relative mt-10 flex flex-col items-center gap-3 sm:flex-row">
               <button
                 onClick={() => begin(false)}
                 className="btn-primary min-h-[48px] px-9 py-4 text-base ring-glow"
@@ -309,27 +352,7 @@ export function DemoCoachClient({ locale }: { locale: Locale }) {
           </FadeIn>
         </section>
       ) : (
-        <section className="relative z-10 mx-auto flex w-full max-w-2xl flex-1 flex-col px-2 pb-3 sm:px-6">
-          {/* Stage progress */}
-          <div className="glass sticky top-0 z-10 mb-2 flex items-center gap-1 rounded-card px-3 py-2.5 sm:gap-2 sm:px-4">
-            {VISIBLE_STAGES.map((s, i) => (
-              <div key={s} className="flex flex-1 flex-col items-center gap-1.5">
-                <div
-                  className={`h-1 w-full rounded-full transition-colors duration-500 ${
-                    i <= stageIdx ? "bg-sage" : "bg-line"
-                  }`}
-                />
-                <span
-                  className={`hidden text-[10px] md:block ${
-                    i === stageIdx ? "font-medium text-ink" : "text-soft/70"
-                  }`}
-                >
-                  {ui.stages[s]}
-                </span>
-              </div>
-            ))}
-          </div>
-
+        <section className="relative z-10 mx-auto flex w-full max-w-2xl flex-1 flex-col px-2 pb-3 pt-2 sm:px-6">
           <div className="card flex flex-1 flex-col p-0">
             <div className="flex-1 space-y-3 overflow-y-auto p-3 sm:p-4">
               {turns.map((t, i) => (
@@ -378,7 +401,6 @@ export function DemoCoachClient({ locale }: { locale: Locale }) {
               <div ref={bottomRef} />
             </div>
 
-            {/* Conversion layer */}
             {showConversion && (
               <FadeIn className="border-t border-line/60 p-4">
                 <div className="flex flex-wrap justify-center gap-2">

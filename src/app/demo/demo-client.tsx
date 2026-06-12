@@ -152,38 +152,81 @@ export function DemoClient({
   }
 
   const phaseIdx = DEMO_PHASES.indexOf(phase);
+  const currentPhase = DEMO_PHASES[Math.max(0, phaseIdx)];
 
   return (
     <main className="mesh-bg relative flex min-h-[100dvh] flex-col">
-      <Aurora className="absolute inset-0 h-full w-full opacity-50" />
+      <Aurora className="absolute inset-0 h-full w-full opacity-70" />
 
-      <header dir="ltr" className="relative z-10 flex items-center justify-between gap-2 px-3 py-3.5 sm:px-6">
-        <div className="flex items-center gap-2">
-          <Link
-            href="/"
-            aria-label="Home"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-surface text-soft transition hover:border-sage/50 hover:text-ink"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 10.5 12 3l9 7.5" />
-              <path d="M5 9.5V21h14V9.5" />
-            </svg>
-          </Link>
-          <Link href="/" className="hidden font-heading text-lg font-semibold sm:block">
-            {appName}
-          </Link>
+      {/* Global control bar — sticky: Home / Language / Theme / Restart */}
+      <div dir="ltr" className="glass sticky top-0 z-30">
+        <div className="flex items-center justify-between gap-2 px-3 py-2 sm:px-6">
+          <div className="flex min-w-0 items-center gap-2">
+            <Link
+              href="/"
+              aria-label="Home"
+              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-line bg-surface text-soft transition hover:border-sage/50 hover:text-ink"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 10.5 12 3l9 7.5" />
+                <path d="M5 9.5V21h14V9.5" />
+              </svg>
+            </Link>
+            <Link href="/" className="hidden truncate font-heading text-lg font-semibold sm:block">
+              {appName}
+            </Link>
+          </div>
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+            <LocaleSwitcher current={locale} />
+            <ThemeToggle />
+            {started && (
+              <button
+                type="button"
+                onClick={reset}
+                aria-label={labels.restart}
+                title={labels.restart}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-surface text-soft transition hover:border-sage/50 hover:text-ink"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 12a9 9 0 1 0 3-6.7" />
+                  <path d="M3 4v5h5" />
+                </svg>
+              </button>
+            )}
+            <Link href="/login" className="btn-secondary hidden md:inline-flex">
+              {labels.login}
+            </Link>
+          </div>
         </div>
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          <LocaleSwitcher current={locale} />
-          <ThemeToggle />
-          <Link href="/login" className="btn-secondary hidden md:inline-flex">
-            {labels.login}
-          </Link>
-        </div>
-      </header>
+
+        {started && (
+          <div className="border-t border-line/40 px-3 pb-2 pt-1.5 sm:px-6">
+            <div className="flex items-center gap-1 sm:gap-2">
+              {DEMO_PHASES.map((p, i) => (
+                <div key={p} className="flex flex-1 flex-col items-center gap-1">
+                  <div
+                    className={`h-1.5 w-full rounded-full transition-colors duration-500 ${
+                      i <= phaseIdx ? "bg-sage" : "bg-line"
+                    }`}
+                  />
+                  <span
+                    className={`hidden text-[10px] sm:block ${
+                      i === phaseIdx ? "font-medium text-ink" : "text-soft/70"
+                    }`}
+                  >
+                    {labels.phases[p]}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <p className="mt-1 text-center text-[11px] font-medium text-ink sm:hidden">
+              {labels.phases[currentPhase]} · {phaseIdx + 1}/{DEMO_PHASES.length}
+            </p>
+          </div>
+        )}
+      </div>
 
       {!started ? (
-        /* ============ Cinematic entry ============ */
         <section className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 pb-24 text-center">
           <FadeIn>
             <p className="eyebrow">{labels.eyebrow}</p>
@@ -209,30 +252,9 @@ export function DemoClient({
           </FadeIn>
         </section>
       ) : (
-        /* ============ Session ============ */
-        <section className="relative z-10 mx-auto flex w-full max-w-2xl flex-1 flex-col px-3 pb-4 sm:px-6">
-          {/* Phase progress */}
-          <div className="glass sticky top-0 z-10 mb-3 flex items-center gap-1 rounded-card px-3 py-2.5 sm:gap-2 sm:px-4">
-            {DEMO_PHASES.map((p, i) => (
-              <div key={p} className="flex flex-1 flex-col items-center gap-1.5">
-                <div
-                  className={`h-1 w-full rounded-full transition-colors duration-500 ${
-                    i <= phaseIdx ? "bg-sage" : "bg-line"
-                  }`}
-                />
-                <span
-                  className={`hidden text-[10px] sm:block ${
-                    i === phaseIdx ? "font-medium text-ink" : "text-soft/70"
-                  }`}
-                >
-                  {labels.phases[p]}
-                </span>
-              </div>
-            ))}
-          </div>
-
+        <section className="relative z-10 mx-auto flex w-full max-w-2xl flex-1 flex-col px-2 pb-3 pt-2 sm:px-6">
           <div className="card flex flex-1 flex-col p-0">
-            <div className="flex-1 space-y-3 overflow-y-auto p-4">
+            <div className="flex-1 space-y-3 overflow-y-auto p-3 sm:p-4">
               {turns.slice(1).map((t, i) => (
                 <motion.div
                   key={i}
@@ -242,7 +264,7 @@ export function DemoClient({
                   className={`flex ${t.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-2.5 leading-relaxed shadow-card ${
+                    className={`max-w-[88%] whitespace-pre-wrap rounded-2xl px-4 py-2.5 leading-relaxed shadow-card sm:max-w-[80%] ${
                       t.role === "user"
                         ? "bg-sage-deep text-canvas"
                         : "border border-line/60 bg-surface text-ink"
@@ -254,7 +276,7 @@ export function DemoClient({
               ))}
               {streaming && (
                 <div className="flex justify-start">
-                  <div className="max-w-[85%] whitespace-pre-wrap rounded-2xl border border-line/60 bg-surface px-4 py-2.5 leading-relaxed shadow-card">
+                  <div className="max-w-[88%] whitespace-pre-wrap rounded-2xl border border-line/60 bg-surface px-4 py-2.5 leading-relaxed shadow-card sm:max-w-[80%]">
                     {streaming}
                     <span className="animate-shimmer">▍</span>
                   </div>
@@ -269,7 +291,6 @@ export function DemoClient({
               <div ref={bottomRef} />
             </div>
 
-            {/* Completion card */}
             {done && (
               <FadeIn className="border-t border-line/60 p-4 text-center">
                 <p className="font-medium">{labels.ctaAfter}</p>
@@ -287,33 +308,24 @@ export function DemoClient({
               </FadeIn>
             )}
 
-            <form onSubmit={send} className="flex gap-2 border-t border-line p-3">
+            <form onSubmit={send} className="flex gap-2 border-t border-line p-2.5 sm:p-3">
               <input
                 ref={inputRef}
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
                 placeholder={labels.typeMessage}
-                className="input flex-1"
+                className="input min-h-[44px] flex-1"
                 maxLength={2000}
               />
               <button
                 type="submit"
                 disabled={busy || !draft.trim()}
-                className="btn-primary"
+                className="btn-primary min-h-[44px]"
               >
                 {labels.send}
               </button>
             </form>
           </div>
-
-          {!done && (
-            <button
-              onClick={reset}
-              className="mx-auto mt-2 text-xs text-soft/70 transition hover:text-ink"
-            >
-              {labels.restart}
-            </button>
-          )}
         </section>
       )}
     </main>

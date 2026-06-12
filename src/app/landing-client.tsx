@@ -28,26 +28,22 @@ export function LandingClient({
 }) {
   return (
     <main id="content" className="min-h-screen">
-      {/* ============ Header ============ */}
       <header dir="ltr" className="sticky top-0 z-40 glass">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 py-3.5 sm:px-6">
           <span className="shrink-0 font-heading text-lg font-semibold">{appName}</span>
-          <div className="flex items-center gap-2 sm:gap-2.5">
-            <span className="hidden sm:block">
-              <LocaleSwitcher current={locale} />
-            </span>
+          <div className="flex items-center gap-1.5 sm:gap-2.5">
+            <LocaleSwitcher current={locale} />
             <ThemeToggle />
             <Link href="/login" className="btn-secondary hidden sm:inline-flex">
               {t.ctaSecondary}
             </Link>
-            <Link href="/signup" className="btn-primary whitespace-nowrap">
+            <Link href="/signup" className="btn-primary hidden whitespace-nowrap min-[400px]:inline-flex">
               {t.cta}
             </Link>
           </div>
         </div>
       </header>
 
-      {/* ============ 1 · Hero ============ */}
       <section className="mesh-bg relative">
         <Aurora className="absolute inset-0 h-full w-full opacity-70" />
         <div className="pointer-events-none absolute inset-x-0 top-8 z-0 flex justify-center opacity-60 md:top-4 md:opacity-80">
@@ -79,7 +75,6 @@ export function LandingClient({
             <p className="mt-5 text-xs text-soft">{t.heroNote}</p>
           </FadeIn>
 
-          {/* animated stats */}
           <Stagger className="mt-20 grid w-full max-w-2xl grid-cols-1 gap-4 sm:grid-cols-3">
             {[
               [1200, t.stats.coaches],
@@ -97,7 +92,6 @@ export function LandingClient({
         </div>
       </section>
 
-      {/* ============ 2 · Journey ============ */}
       <section className="mx-auto max-w-6xl px-6 py-24">
         <FadeIn className="text-center">
           <h2 className="text-3xl font-semibold md:text-4xl">{t.journeyTitle}</h2>
@@ -119,7 +113,6 @@ export function LandingClient({
         </Stagger>
       </section>
 
-      {/* ============ 3 · Benefits ============ */}
       <section className="bg-canvas2/60 py-24">
         <div className="mx-auto max-w-6xl px-6">
           <FadeIn className="text-center">
@@ -141,7 +134,6 @@ export function LandingClient({
         </div>
       </section>
 
-      {/* ============ 4 · Features ============ */}
       <section className="mx-auto max-w-6xl px-6 py-24">
         <FadeIn className="text-center">
           <h2 className="text-3xl font-semibold md:text-4xl">{t.featuresTitle}</h2>
@@ -157,7 +149,6 @@ export function LandingClient({
         </Stagger>
       </section>
 
-      {/* ============ 5 · Stories ============ */}
       <section className="mesh-bg py-24">
         <div className="relative z-10 mx-auto max-w-6xl px-6">
           <FadeIn className="text-center">
@@ -178,7 +169,6 @@ export function LandingClient({
         </div>
       </section>
 
-      {/* ============ 6 · Pricing ============ */}
       <FounderSection locale={locale} />
 
       <section className="mx-auto max-w-6xl px-6 py-24">
@@ -219,7 +209,6 @@ export function LandingClient({
         </Stagger>
       </section>
 
-      {/* ============ 7 · FAQ ============ */}
       <section className="mx-auto max-w-3xl px-6 py-24">
         <FadeIn className="text-center">
           <h2 className="text-3xl font-semibold md:text-4xl">{t.faqTitle}</h2>
@@ -231,7 +220,6 @@ export function LandingClient({
         </div>
       </section>
 
-      {/* ============ 8 · CTA ============ */}
       <section className="px-6 pb-28">
         <FadeIn>
           <div className="mesh-bg relative mx-auto max-w-5xl overflow-hidden rounded-[24px] border border-line bg-surface px-8 py-20 text-center shadow-lift">
