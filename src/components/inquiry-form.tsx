@@ -2,16 +2,12 @@
 
 import { useEffect, useState } from "react";
 
-type Status = "idle" | "sending" | "sent" | "error";
+type Status = "idle" | "sending" | "sent" | "mailto";
 
 function rnd() {
   return 1 + Math.floor(Math.random() * 9);
 }
 
-/**
- * Shared inquiry form — sends directly from the site via /api/contact.
- * Includes honeypot, "I'm not a robot" checkbox and an arithmetic captcha.
- */
 export function InquiryForm({
   email,
   subjectPrefix,
@@ -25,13 +21,12 @@ export function InquiryForm({
   const [from, setFrom] = useState("");
   const [subject, setSubject] = useState(subjects?.[0] ?? "");
   const [message, setMessage] = useState("");
-  const [website, setWebsite] = useState(""); // honeypot
+  const [website, setWebsite] = useState("");
   const [human, setHuman] = useState(false);
   const [capA, setCapA] = useState(0);
   const [capB, setCapB] = useState(0);
   const [capAnswer, setCapAnswer] = useState("");
   const [status, setStatus] = useState<Status>("idle");
-  const [error, setError] = useState("");
 
   useEffect(() => {
     setCapA(rnd());
@@ -44,11 +39,20 @@ export function InquiryForm({
     setCapAnswer("");
   }
 
+  function openMailApp() {
+    // Instant sending unavailable — fall back to the visitor's mail app,
+    // pre-filled with the message (the original, always-working flow).
+    const su = encodeURIComponent(`[${subjectPrefix}] ${subject || "Inquiry"}${name ? ` — ${name}` : ""}`);
+    const body = encodeURIComponent(`${message}\n\n—\nFrom: ${name}${from ? ` <${from}>` : ""}`);
+    window.location.href = `mailto:${email}?subject=${su}&body=${body}`;
+    setStatus("mailto");
+    regenCaptcha();
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (status === "sending") return;
     setStatus("sending");
-    setError("");
 
     try {
       const res = await fetch("/api/contact", {
@@ -67,18 +71,13 @@ export function InquiryForm({
           captchaAnswer: Number(capAnswer),
         }),
       });
-      const data = await res.json().catch(() => ({}));
       if (res.ok) {
         setStatus("sent");
       } else {
-        setError(data.error ?? "Could not send.");
-        setStatus("error");
-        regenCaptcha();
+        openMailApp();
       }
     } catch {
-      setError("Network error.");
-      setStatus("error");
-      regenCaptcha();
+      openMailApp();
     }
   }
 
@@ -103,6 +102,27 @@ export function InquiryForm({
           className="btn-secondary mt-5"
         >
           Send another message
+        </button>
+      </div>
+    );
+  }
+
+  if (status === "mailto") {
+    return (
+      <div className="card mt-4 p-8 text-center">
+        <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-gold/15 text-xl text-gold">
+          ✉
+        </span>
+        <p className="mt-4 text-lg font-semibold">Almost there</p>
+        <p className="mt-1.5 text-sm text-soft">
+          Your email app should now be open with the message ready — just press Send there.
+          Nothing opened? Write directly to{" "}
+          <a href={`mailto:${email}`} className="text-sage-deep underline">
+            {email}
+          </a>
+        </p>
+        <button onClick={() => setStatus("idle")} className="btn-secondary mt-5">
+          Back to the form
         </button>
       </div>
     );
@@ -140,7 +160,6 @@ export function InquiryForm({
         </div>
       </div>
 
-      {/* Honeypot — hidden from humans */}
       <div className="absolute -left-[9999px] top-auto" aria-hidden="true">
         <label htmlFor="iq-website">Website</label>
         <input
@@ -191,7 +210,6 @@ export function InquiryForm({
         />
       </div>
 
-      {/* Human verification */}
       <div className="grid gap-3 rounded-xl border border-line bg-canvas2/50 p-4 sm:grid-cols-2 sm:items-center">
         <label className="flex min-h-[44px] cursor-pointer items-center gap-3">
           <input
@@ -219,15 +237,6 @@ export function InquiryForm({
           />
         </div>
       </div>
-
-      {status === "error" && (
-        <p className="text-sm text-red-500">
-          {error}{" "}
-          <a href={`mailto:${email}`} className="underline">
-            Email us directly: {email}
-          </a>
-        </p>
-      )}
 
       <button type="submit" disabled={status === "sending"} className="btn-primary w-full sm:w-auto">
         {status === "sending" ? (
