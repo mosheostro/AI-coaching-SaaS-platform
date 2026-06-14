@@ -7,6 +7,8 @@ export type TaskStatus =
   | "approved"
   | "returned";
 
+export type AccountStatus = "active" | "suspended";
+
 export interface Profile {
   id: string;
   email: string;
@@ -15,6 +17,11 @@ export interface Profile {
   avatar_url: string | null;
   locale: "en" | "ru" | "he";
   created_at: string;
+  status: AccountStatus;
+  must_change_password: boolean;
+  last_seen_at: string | null;
+  suspended_at: string | null;
+  suspended_reason: string | null;
 }
 
 export interface CoachingSession {
