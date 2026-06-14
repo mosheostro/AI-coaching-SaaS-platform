@@ -11,7 +11,6 @@ import { getOrigin, clientIp } from "@/lib/site-url";
 
 export type AuthState = { error?: string; message?: string };
 
-// Internal codes the forms localize via the dictionary.
 const ERR = {
   invalidEmail: "invalidEmail",
   weakPassword: "weakPassword",
@@ -19,8 +18,9 @@ const ERR = {
   generic: "genericError",
 } as const;
 
-async function ip(): Promise<string> {
-  return clientIp(await headers());
+async function reqMeta(): Promise<{ ip: string; ua: string }> {
+  const h = await headers();
+  return { ip: clientIp(h), ua: h.get("user-agent") ?? "" };
 }
 
 export async function login(
@@ -30,8 +30,9 @@ export async function login(
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   const captchaToken = String(formData.get("cf-turnstile-response") ?? "");
+  const { ip, ua } = await reqMeta();
 
-  if (rateLimited(`login:${await ip()}`, RULES.login)) {
+  if (rateLimited(`login:${ip}`, RULES.login)) {
     return { error: ERR.tooMany };
   }
   if (!isValidEmail(email)) return { error: ERR.invalidEmail };
@@ -43,8 +44,17 @@ export async function login(
     options: captchaToken ? { captchaToken } : undefined,
   });
 
-  if (error) return { error: error.message };
+  if (error) {
+    // Record the failed attempt for the admin Security Center (best-effort).
+    void supabase.rpc("log_security_event", {
+      p_type: "failed_login", p_email: email, p_ip: ip, p_user_agent: ua, p_meta: {},
+    });
+    return { error: error.message };
+  }
 
+  void supabase.rpc("log_security_event", {
+    p_type: "login", p_email: email, p_ip: ip, p_user_agent: ua, p_meta: {},
+  });
   revalidatePath("/", "layout");
   redirect("/dashboard");
 }
@@ -58,8 +68,9 @@ export async function signup(
   const fullName = String(formData.get("full_name") ?? "").trim();
   const role = formData.get("role") === "coach" ? "coach" : "client";
   const captchaToken = String(formData.get("cf-turnstile-response") ?? "");
+  const { ip } = await reqMeta();
 
-  if (rateLimited(`signup:${await ip()}`, RULES.signup)) {
+  if (rateLimited(`signup:${ip}`, RULES.signup)) {
     return { error: ERR.tooMany };
   }
   if (!isValidEmail(email)) return { error: ERR.invalidEmail };
@@ -74,7 +85,6 @@ export async function signup(
     password,
     options: {
       data: { full_name: fullName, role },
-      // Used only if email confirmation is re-enabled later.
       emailRedirectTo: `${origin}/auth/confirm?next=/dashboard`,
       ...(captchaToken ? { captchaToken } : {}),
     },
@@ -82,17 +92,13 @@ export async function signup(
 
   if (error) return { error: error.message };
 
-  // Instant access: confirmation disabled -> a session is returned now.
   if (data.session) {
     revalidatePath("/", "layout");
     redirect("/dashboard");
   }
-
-  // Fallback if email confirmation is ever turned back on at project level.
   if (data.user && !data.session) {
     return { message: "check_email" };
   }
-
   return { error: ERR.generic };
 }
 
@@ -102,8 +108,9 @@ export async function requestPasswordReset(
 ): Promise<AuthState> {
   const email = String(formData.get("email") ?? "").trim();
   const captchaToken = String(formData.get("cf-turnstile-response") ?? "");
+  const { ip, ua } = await reqMeta();
 
-  if (rateLimited(`reset:${await ip()}`, RULES.reset)) {
+  if (rateLimited(`reset:${ip}`, RULES.reset)) {
     return { error: ERR.tooMany };
   }
   if (!isValidEmail(email)) return { error: ERR.invalidEmail };
@@ -115,8 +122,9 @@ export async function requestPasswordReset(
     redirectTo: `${origin}/auth/confirm?next=/reset-password`,
     ...(captchaToken ? { captchaToken } : {}),
   });
-
-  // Always report success -- never reveal whether an account exists.
+  void supabase.rpc("log_security_event", {
+    p_type: "password_reset", p_email: email, p_ip: ip, p_user_agent: ua, p_meta: {},
+  });
   return { message: "reset_sent" };
 }
 
@@ -129,8 +137,6 @@ export async function updatePassword(
   if (pwProblem) return { error: pwProblem };
 
   const supabase = await createClient();
-
-  // The recovery link established a session via /auth/confirm.
   const {
     data: { user },
   } = await supabase.auth.getUser();

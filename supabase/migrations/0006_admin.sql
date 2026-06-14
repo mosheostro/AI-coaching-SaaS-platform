@@ -209,3 +209,8 @@ create trigger trg_owner_updated before update on owner_profile
   for each row execute function set_updated_at();
 create trigger trg_settings_updated before update on platform_settings
   for each row execute function set_updated_at();
+
+-- ---------- Admin read access to AI tables (owner-only in 0004) ----------
+create policy "ai sessions admin read" on ai_sessions for select using (is_admin());
+create policy "ai messages admin read" on ai_messages for select using (is_admin());
+create policy "ai memories admin read" on ai_memories for select using (is_admin());
