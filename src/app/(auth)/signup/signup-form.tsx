@@ -2,6 +2,8 @@
 
 import { useActionState } from "react";
 import { signup, type AuthState } from "../actions";
+import { Turnstile } from "@/components/turnstile";
+import { resolveAuthError, type AuthErrorLabels } from "../login/login-form";
 
 export function SignupForm({
   labels,
@@ -14,7 +16,8 @@ export function SignupForm({
     iAmClient: string;
     submit: string;
     checkEmail: string;
-  };
+    passwordHint: string;
+  } & AuthErrorLabels;
 }) {
   const [state, action, pending] = useActionState<AuthState, FormData>(
     signup,
@@ -25,19 +28,21 @@ export function SignupForm({
     return <p className="text-green-700">{labels.checkEmail}</p>;
   }
 
+  const error = resolveAuthError(state.error, labels);
+
   return (
     <form action={action} className="space-y-4">
       <div>
         <label className="block mb-1 font-medium" htmlFor="full_name">
           {labels.fullName}
         </label>
-        <input id="full_name" name="full_name" required className="input" />
+        <input id="full_name" name="full_name" autoComplete="name" required className="input" />
       </div>
       <div>
         <label className="block mb-1 font-medium" htmlFor="email">
           {labels.email}
         </label>
-        <input id="email" name="email" type="email" required className="input" />
+        <input id="email" name="email" type="email" autoComplete="email" required className="input" />
       </div>
       <div>
         <label className="block mb-1 font-medium" htmlFor="password">
@@ -47,10 +52,12 @@ export function SignupForm({
           id="password"
           name="password"
           type="password"
+          autoComplete="new-password"
           required
-          minLength={6}
+          minLength={8}
           className="input"
         />
+        <p className="mt-1 text-xs text-soft">{labels.passwordHint}</p>
       </div>
       <fieldset className="flex gap-4">
         <label className="flex items-center gap-2">
@@ -62,7 +69,8 @@ export function SignupForm({
           {labels.iAmClient}
         </label>
       </fieldset>
-      {state.error && <p className="text-red-600 text-sm">{state.error}</p>}
+      <Turnstile />
+      {error && <p className="text-red-600 text-sm">{error}</p>}
       <button type="submit" disabled={pending} className="btn-primary w-full">
         {labels.submit}
       </button>

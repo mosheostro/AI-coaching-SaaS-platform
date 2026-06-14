@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { getDictionary } from "@/i18n";
-import { LoginForm } from "./login-form";
+import { ForgotForm } from "./forgot-form";
 
-export default async function LoginPage() {
+export default async function ForgotPasswordPage() {
   const { t } = await getDictionary();
 
   return (
@@ -24,13 +24,12 @@ export default async function LoginPage() {
       </header>
       <div className="flex flex-1 items-center justify-center px-4 pb-16">
         <div className="card w-full max-w-sm">
-          <h1 className="text-xl font-semibold mb-6">{t.auth.login}</h1>
-          <LoginForm
+          <h1 className="text-xl font-semibold mb-6">{t.auth.resetPassword}</h1>
+          <ForgotForm
             labels={{
               email: t.auth.email,
-              password: t.auth.password,
-              submit: t.auth.login,
-              forgotPassword: t.auth.forgotPassword,
+              submit: t.auth.sendResetLink,
+              sent: t.auth.resetLinkSent,
               invalidEmail: t.auth.invalidEmail,
               weakPassword: t.auth.weakPassword,
               tooManyAttempts: t.auth.tooManyAttempts,
@@ -38,9 +37,8 @@ export default async function LoginPage() {
             }}
           />
           <p className="mt-4 text-slate-500">
-            {t.auth.noAccount}{" "}
-            <Link href="/signup" className="text-primary-600 hover:underline">
-              {t.auth.signup}
+            <Link href="/login" className="text-primary-600 hover:underline">
+              {t.auth.backToLogin}
             </Link>
           </p>
         </div>

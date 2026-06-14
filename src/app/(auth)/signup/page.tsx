@@ -34,6 +34,11 @@ export default async function SignupPage() {
               iAmClient: t.auth.iAmClient,
               submit: t.auth.signup,
               checkEmail: t.auth.checkEmail,
+              passwordHint: t.auth.passwordHint,
+              invalidEmail: t.auth.invalidEmail,
+              weakPassword: t.auth.weakPassword,
+              tooManyAttempts: t.auth.tooManyAttempts,
+              genericError: t.auth.genericError,
             }}
           />
           <p className="mt-4 text-slate-500">

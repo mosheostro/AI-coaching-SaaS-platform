@@ -1,9 +1,18 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { getDictionary } from "@/i18n";
-import { LoginForm } from "./login-form";
+import { createClient } from "@/lib/supabase/server";
+import { ResetForm } from "./reset-form";
 
-export default async function LoginPage() {
+export default async function ResetPasswordPage() {
   const { t } = await getDictionary();
+
+  // The recovery link must have established a session (via /auth/confirm).
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/forgot-password");
 
   return (
     <main className="flex min-h-[100dvh] flex-col">
@@ -24,25 +33,18 @@ export default async function LoginPage() {
       </header>
       <div className="flex flex-1 items-center justify-center px-4 pb-16">
         <div className="card w-full max-w-sm">
-          <h1 className="text-xl font-semibold mb-6">{t.auth.login}</h1>
-          <LoginForm
+          <h1 className="text-xl font-semibold mb-6">{t.auth.resetPassword}</h1>
+          <ResetForm
             labels={{
-              email: t.auth.email,
-              password: t.auth.password,
-              submit: t.auth.login,
-              forgotPassword: t.auth.forgotPassword,
+              newPassword: t.auth.newPassword,
+              submit: t.auth.updatePassword,
+              passwordHint: t.auth.passwordHint,
               invalidEmail: t.auth.invalidEmail,
               weakPassword: t.auth.weakPassword,
               tooManyAttempts: t.auth.tooManyAttempts,
               genericError: t.auth.genericError,
             }}
           />
-          <p className="mt-4 text-slate-500">
-            {t.auth.noAccount}{" "}
-            <Link href="/signup" className="text-primary-600 hover:underline">
-              {t.auth.signup}
-            </Link>
-          </p>
         </div>
       </div>
     </main>
